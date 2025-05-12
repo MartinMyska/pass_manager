@@ -1,19 +1,44 @@
 import tkinter as tk
+from tkinter import messagebox
+import random
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
+
+def generate_password():
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+
+    pass_letters = [random.choice(letters) for _ in range(random.randint(8, 10))]
+    pass_char = [random.choice(numbers) for _ in range(random.randint(2, 4))]
+    pass_number = [random.choice(symbols) for _ in range(random.randint(2, 4))]
+
+    password_list = pass_char + pass_letters + pass_number
+    random.shuffle(password_list)
+
+    password = "".join(password_list)
+    password_entry.insert(0, password)
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
-def save():
 
+def save():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
 
-    with open("data.txt", "a") as f:
-        f.write(f"{website} | {email} | {password}\n")
-        website_entry.delete(0, tk.END)
-        password_entry.delete(0, tk.END)
+    if not (website and password):
+        messagebox.showinfo(title="Whoops", message="Please fill in the fields")
+        return
+
+    is_ok = messagebox.askokcancel(title=website, message=f"Wntered details: \nEmail: {email} \n Password: {password} \n Save?")
+
+    if is_ok:
+        with open("data.txt", "a") as f:
+            f.write(f"{website} | {email} | {password}\n")
+            website_entry.delete(0, tk.END)
+            password_entry.delete(0, tk.END)
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -45,7 +70,7 @@ website_entry.focus()
 email_entry.insert(0, "martin.mysska@gmail.com")
 
 # Buttons
-generate_password_button = tk.Button(text="Generate Password", width=12)
+generate_password_button = tk.Button(text="Generate Password", width=12, command=generate_password)
 add_button = tk.Button(text="Add", width=35, command=save)
 generate_password_button.grid(row=3, column=2)
 add_button.grid(row=4, column=1, columnspan=2)
