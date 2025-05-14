@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
@@ -27,20 +28,25 @@ def save():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {website: {"email": email, "password": password}}
 
     if not (website and password):
         messagebox.showinfo(title="Whoops", message="Please fill in the fields")
         return
 
-    is_ok = messagebox.askokcancel(title=website, message=f"Wntered details: \nEmail: {email} \n Password: {password} \n Save?")
+    with open("data.json", "r") as f:
+        data = json.load(f)
+        data.update(new_data)
 
-    if is_ok:
-        with open("data.txt", "a") as f:
-            f.write(f"{website} | {email} | {password}\n")
-            website_entry.delete(0, tk.END)
-            password_entry.delete(0, tk.END)
+    with open("data.json", "w") as f:
+        json.dump(data, f, indent=4)
+
+    print(data)
+    website_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
 
 # ---------------------------- UI SETUP ------------------------------- #
+
 
 window = tk.Tk()
 window.title("Password Manager")
